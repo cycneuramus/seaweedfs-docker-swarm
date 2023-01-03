@@ -6,4 +6,3 @@ weed volume \
 	-preStopSeconds=1 \
 	-dir=/data \
 	-dataCenter="$HOST"
-

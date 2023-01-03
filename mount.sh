@@ -21,11 +21,10 @@ docker run \
 	-v /mnt/keydb:/db \
 	juicedata/mount:v1.0.3-4.8.3 \
 	/usr/local/bin/juicefs mount \
-	-o allow_other,writeback_cache,user_id=1000,group_id=1000 \
-	--cache-dir $cch \
-	--cache-size 16000 \
-	--enable-xattr \
-	--writeback \
-	"$meta" \
-	"$mnt"
-
+		-o allow_other,writeback_cache,user_id=1000,group_id=1000 \
+		--cache-dir $cch \
+		--cache-size 16000 \
+		--enable-xattr \
+		--writeback \
+		"$meta" \
+		"$mnt"

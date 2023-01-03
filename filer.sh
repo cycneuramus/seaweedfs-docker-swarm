@@ -1,9 +1,9 @@
 #!/bin/sh
 
 cat > /etc/seaweedfs/filer.toml <<- EOF
-	    [leveldb3]
-	    enabled = true
-	    dir = "/data/filerdb"
+	[leveldb3]
+	enabled = true
+	dir = "/data/filerdb"
 EOF
 
 volume_hosts="node1 node2 node3 node4"
@@ -23,4 +23,3 @@ weed filer \
 	-s3.port=8333 \
 	-s3.config=/etc/seaweedfs/s3.json \
 	-s3.allowEmptyFolder=true
-
