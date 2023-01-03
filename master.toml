@@ -1,0 +1,10 @@
+[master.maintenance]
+scripts = """
+  lock
+  volume.deleteEmpty -quietFor=6h -force
+  volume.balance -force
+  volume.fix.replication
+  s3.clean.uploads -timeAgo=24h
+  unlock
+"""
+sleep_minutes = 60

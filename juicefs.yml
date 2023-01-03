@@ -1,0 +1,49 @@
+version: "3.9"
+
+networks:
+  public:
+    external: true
+
+configs:
+  makefs:
+    file: ./makefs.sh
+  mount:
+    file: ./mount.sh
+
+services:
+  makefs:
+    image: juicedata/mount:v1.0.3-4.8.3
+    entrypoint: sh /makefs.sh
+    environment:
+      - HOST={{.Node.Hostname}}
+    networks:
+      - public
+    volumes:
+      - /mnt/keydb:/db
+    configs:
+      - source: makefs
+        target: /makefs.sh
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+
+  mount:
+    image: docker:dind
+    cap_add:
+      - SYS_ADMIN
+    networks:
+      - public
+    environment:
+      - HOST={{.Node.Hostname}}
+    volumes:
+      - /mnt/cld:/mnt/cld:rshared
+      - /mnt/cch:/mnt/cch
+      - /mnt/keydb:/mnt/keydb
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    entrypoint: sh /mount.sh
+    configs:
+      - source: mount
+        target: /mount.sh
+    deploy:
+      mode: global

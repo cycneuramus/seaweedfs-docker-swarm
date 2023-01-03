@@ -1,0 +1,20 @@
+{
+  "identities": [
+    {
+      "name": "swfs",
+      "credentials": [
+        {
+          "accessKey": "myAccessKey",
+          "secretKey": "mySsecretKey"
+        }
+      ],
+      "actions": [
+        "Admin",
+        "Read",
+        "List",
+        "Tagging",
+        "Write"
+      ]
+    }
+  ]
+}
