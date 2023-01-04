@@ -3,6 +3,6 @@
 weed volume \
 	-mserver=seaweedfs_master:9333 \
 	-max=100 \
-	-preStopSeconds=1 \
+	-compactionMBps=2 \
 	-dir=/data \
 	-dataCenter="$HOST"
