@@ -1,6 +1,6 @@
 # SeaweedFS + JuiceFS Docker Swarm stack
 
-Deploy a performant and highly available persistent storage system for [Docker Swarm](https://docs.docker.com/engine/swarm/) using [SeaweedFS](https://github.com/seaweedfs/seaweedfs) mounted on [JuiceFS](https://github.com/juicedata/juicefs/).
+This is a draft of a performant and highly available persistent storage system for [Docker Swarm](https://docs.docker.com/engine/swarm/) using [SeaweedFS](https://github.com/seaweedfs/seaweedfs) mounted on [JuiceFS](https://github.com/juicedata/juicefs/).
 
 ## Architecture
 
