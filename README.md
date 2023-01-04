@@ -22,10 +22,10 @@ mkdir /mnt/seaweedfs/{filer,master,volume}
 + On a Swarm master node:
 
 ```
-docker stack deploy -c seaweedfs.yml seaweedfs
+docker stack deploy -c seaweed/docker-compose.yml seaweedfs
 docker exec -it <SeaweedFS Master container> weed shell
 > s3.bucket.create -name jfs
 
-docker stack deploy -c keydb.yml keydb
-docker stack deploy -c juicefs.yml juicefs
+docker stack deploy -c keydb/docker-compose.yml keydb
+docker stack deploy -c juicefs/docker-compose.yml juicefs
 ```
