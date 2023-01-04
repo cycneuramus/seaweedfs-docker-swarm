@@ -20,7 +20,7 @@ x-keydb: &keydb
   configs:
     - source: keydb
       target: /keydb.sh
-  stop_grace_period: 30s # CRUCIAL to avoid data loss following a SIGKILL from Docker
+  stop_grace_period: 1m30s # CRUCIAL to avoid premature SIGKILL from Docker, risking data loss
       
 services:
   node1:
