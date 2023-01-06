@@ -5,8 +5,22 @@ mnt=/mnt/cld
 cnt_name=juicefs_${HOST}
 meta=keydb_${HOST}:6379/1
 
-docker stop "$cnt_name" || true
-sleep 1
+trap 'cleanup' INT TERM
+
+cleanup() {
+	if  [ -n "$mount_proc" ]; then
+		kill     -TERM "$mount_proc"
+	else
+		docker     stop "$cnt_name" > /dev/null 2>&1
+	fi
+
+	umount  "$mnt"
+	while  mountpoint -q "$mnt"; do
+		sleep     5
+	done
+}
+
+cleanup
 
 docker run \
 	--rm \
@@ -25,6 +39,9 @@ docker run \
 	--cache-dir $cch \
 	--cache-size 16000 \
 	--enable-xattr \
-	--writeback \
+	--no-usage-reports \
 	"$meta" \
-	"$mnt"
+	"$mnt" &
+
+mount_proc=$!
+wait "$mount_proc"

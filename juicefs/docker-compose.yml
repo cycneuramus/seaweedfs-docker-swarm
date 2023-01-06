@@ -41,9 +41,12 @@ services:
       - /mnt/cch:/mnt/cch
       - /mnt/keydb:/mnt/keydb
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    entrypoint: sh /mount.sh
+    entrypoint: /mount.sh
+    init: true
+    stop_grace_period: 30s
     configs:
       - source: mount
         target: /mount.sh
+        mode: 755
     deploy:
       mode: global
