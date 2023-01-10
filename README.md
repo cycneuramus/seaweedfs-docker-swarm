@@ -1,4 +1,4 @@
-# SeaweedFS + JuiceFS Docker Swarm stack
+# SeaweedFS Docker Swarm stack
 
 This is a [Docker Swarm](https://docs.docker.com/engine/swarm/) stack for deploying a performant and highly available persistent storage system using [SeaweedFS](https://github.com/seaweedfs/seaweedfs).
 
