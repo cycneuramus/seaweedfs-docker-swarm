@@ -1,0 +1,139 @@
+version: "3.9"
+
+networks:
+  public:
+    external: true
+
+configs:
+  filer:
+    file: ./filer.sh
+  mount:
+    file: ./mount.sh
+  volume:
+    file: ./volume.sh
+
+x-filer: &filer
+  image: chrislusf/seaweedfs:latest
+  environment:
+    - HOST={{.Node.Hostname}}
+  entrypoint: /filer.sh
+  networks:
+    - public
+  volumes:
+    - /mnt/seaweedfs/filer:/data/filerdb
+  configs:
+    - source: filer
+      target: /filer.sh
+      mode: 755
+
+x-volume: &volume
+  image: chrislusf/seaweedfs:latest
+  environment:
+    - HOST={{.Node.Hostname}}
+  entrypoint: /volume.sh
+  networks:
+    - public
+  volumes:
+    - /mnt/seaweedfs/volume:/data
+  configs:
+    - source: volume
+      target: /volume.sh
+      mode: 755
+
+services:
+  master:
+    image: chrislusf/seaweedfs:latest
+    command: 
+      - "master"
+      - "-defaultReplication=200"
+      - "-volumeSizeLimitMB=1024"
+      - "-garbageThreshold=0.01"
+      - "-mdir=/data"
+    networks:
+      - public
+    volumes:
+      - /mnt/seaweedfs/master:/data
+    deploy:
+      placement:
+        max_replicas_per_node: 1
+
+  mount:
+    image: docker:dind
+    cap_add: 
+      - SYS_ADMIN
+    networks:
+      - public
+    environment:
+      - HOST={{.Node.Hostname}}
+    volumes:
+      - /mnt:/mnt:rshared
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    entrypoint: /mount.sh
+    init: true
+    stop_grace_period: 30s
+    configs:
+      - source: mount
+        target: /mount.sh
+        mode: 755
+    deploy:
+      mode: global
+
+  cron: # depends on https://github.com/crazy-max/swarm-cronjob/
+    image: chrislusf/seaweedfs:latest
+    networks:
+      - public
+    environment:
+      SHELL_MASTER: seaweedfs_master:9333
+    command: 
+      - "shell"
+      - "lock;"
+      - "volume.deleteEmpty -quietFor=24h -force;"
+      - "volume.balance -force;"
+      - "volume.fix.replication;"
+      - "unlock"
+    deploy:
+      replicas: 0
+      restart_policy:
+        condition: none
+      labels: 
+        - swarm.cronjob.enable=true
+        - swarm.cronjob.schedule=0 3 * * *
+        - swarm.cronjob.skip-running=true
+
+  filer_node1:
+    <<: *filer
+    deploy:
+      placement:
+        constraints:
+          - "node.hostname == node1"
+  filer_node2:
+    <<: *filer
+    deploy:
+      placement:
+        constraints:
+          - "node.hostname == node2"
+  filer_node3:
+    <<: *filer
+    deploy:
+      placement:
+        constraints:
+          - "node.hostname == node3"
+
+  volume_node1:
+    <<: *volume
+    deploy:
+      placement:
+        constraints:
+          - "node.hostname == node1"
+  volume_node2:
+    <<: *volume
+    deploy:
+      placement:
+        constraints:
+          - "node.hostname == node2"
+  volume_node3:
+    <<: *volume
+    deploy:
+      placement:
+        constraints:
+          - "node.hostname == node3"
